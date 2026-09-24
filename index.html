@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BharatSetu — Autonomous Maritime Spill Attribution System</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet.js CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Command & Mission Bar -->
+  <header class="top-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="national-insignia">🇮🇳</div>
+        <div class="brand-text">
+          <h1>
+            BharatSetu 
+            <span class="sih-tag">SIH 2026 PROTOTYPE</span>
+          </h1>
+          <p>Autonomous Maritime Spill Attribution System // Arabian Sea Operational Sector</p>
+        </div>
+      </div>
+
+      <div class="system-telemetry-bar">
+        <div class="telemetry-item">
+          <span class="status-online"><span class="pulse-dot"></span> PIPELINE ONLINE</span>
+        </div>
+        <div class="telemetry-item" id="mission-clock">
+          <span class="clock-utc">02:15:00 UTC</span> | <span class="clock-ist">07:45:00 IST</span>
+        </div>
+        <div class="telemetry-item">
+          SECTOR: <strong>MUMBAI HIGH (04-W)</strong>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-primary" id="btn-run-sim" title="Run full automated pipeline simulation">
+          ▶ Run Simulation
+        </button>
+        <button class="btn-secondary" id="btn-sim-speed" title="Toggle simulation playback speed">
+          1x Speed
+        </button>
+        <button class="btn-secondary" onclick="window.app.goToStage(1, true)" title="Reset to Stage 1">
+          ⟳ Reset
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Step-by-Step Pipeline Progress Stepper -->
+  <nav class="stepper-section">
+    <div class="stepper-container" id="progress-stepper">
+      <!-- Injected dynamically by app.js -->
+    </div>
+  </nav>
+
+  <!-- Main Viewport for the 6 Stages -->
+  <main class="main-viewport">
+
+    <!-- ====================================================================
+         STAGE 1: Data Ingestion Dashboard
+         ==================================================================== -->
+    <section id="stage-1" class="stage-view active">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>1. Multi-Sensor Data Ingestion Dashboard</h2>
+          <p>Continuous autonomous ingestion & cloud synchronization from Earth Observation and Marine Telemetry APIs</p>
+        </div>
+        <div class="stage-badge-pill">CLOUD WORKER // INGESTION ENGINE v2.4</div>
+      </div>
+
+      <!-- 3 Animated Data Source Cards -->
+      <div class="sources-grid">
+        <!-- Card 1: Sentinel-1 SAR -->
+        <div class="source-card">
+          <div class="card-top">
+            <div class="source-icon">🛰️</div>
+            <div class="status-live-chip"><span class="pulse-dot"></span> LIVE INGESTION</div>
+          </div>
+          <h3>Sentinel-1 SAR Imagery</h3>
+          <div class="source-subtitle">Copernicus C-Band Radar (VV/VH Polarization)</div>
+          <div class="source-metrics-list">
+            <div class="metric-row"><span>Sensor:</span> <strong>Sentinel-1B C-SAR</strong></div>
+            <div class="metric-row"><span>Acquisition Mode:</span> <strong>IW GRD (10m Res)</strong></div>
+            <div class="metric-row"><span>Data Stream:</span> <strong>18.4 MB/s (142 pkts/s)</strong></div>
+            <div class="metric-row"><span>Tile ID:</span> <strong>S1B_IW_GRDH_1SDV_0918</strong></div>
+          </div>
+        </div>
+
+        <!-- Card 2: INCOIS Ocean Data -->
+        <div class="source-card">
+          <div class="card-top">
+            <div class="source-icon">🌊</div>
+            <div class="status-live-chip"><span class="pulse-dot"></span> LIVE INGESTION</div>
+          </div>
+          <h3>INCOIS Ocean Data</h3>
+          <div class="source-subtitle">Hydrodynamic ROMS Model & HF Radar Surface Grid</div>
+          <div class="source-metrics-list">
+            <div class="metric-row"><span>Provider:</span> <strong>INCOIS Hyderabad</strong></div>
+            <div class="metric-row"><span>Hydrodynamic Model:</span> <strong>ROMS 0.05° Grid</strong></div>
+            <div class="metric-row"><span>Current Vector:</span> <strong>0.82 kts @ 165° SSE</strong></div>
+            <div class="metric-row"><span>Surface Wind:</span> <strong>14.2 kts @ 290° WNW</strong></div>
+          </div>
+        </div>
+
+        <!-- Card 3: AIS Vessel Stream -->
+        <div class="source-card">
+          <div class="card-top">
+            <div class="source-icon">🚢</div>
+            <div class="status-live-chip"><span class="pulse-dot"></span> LIVE INGESTION</div>
+          </div>
+          <h3>AIS Vessel Data</h3>
+          <div class="source-subtitle">Class-A Terrestrial & Satellite Marine Transponders</div>
+          <div class="source-metrics-list">
+            <div class="metric-row"><span>Provider:</span> <strong>DG Shipping / NMDA Feed</strong></div>
+            <div class="metric-row"><span>Active Targets:</span> <strong>48 vessels in ROI</strong></div>
+            <div class="metric-row"><span>Update Rate:</span> <strong>420 bursts/sec</strong></div>
+            <div class="metric-row"><span>Corridor:</span> <strong>Mumbai Offshore Route 4A</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Automated Pipeline Console -->
+      <div class="terminal-wrapper">
+        <div class="terminal-header">
+          <div class="terminal-header-title">
+            <span>💻 AUTONOMOUS CLUSTER EVENT LOG STREAM</span>
+          </div>
+          <div class="terminal-dots">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal-log-stream">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STAGE 2: SAR Image Preprocessing
+         ==================================================================== -->
+    <section id="stage-2" class="stage-view">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>2. SAR Satellite Image Preprocessing</h2>
+          <p>Radiometric calibration, incidence angle correction, and speckle noise suppression via Google Earth Engine API</p>
+        </div>
+        <div class="stage-badge-pill">GEE / SNAP CLUSTER // BACKSCATTER PIPELINE</div>
+      </div>
+
+      <!-- GEE Processing Progress Card -->
+      <div class="gee-progress-card">
+        <div class="gee-header">
+          <strong>⚡ Google Earth Engine API Pipeline</strong>
+          <span class="status-live-chip"><span class="pulse-dot"></span> 100% COMPLETE</span>
+        </div>
+        <div class="progress-track-bg">
+          <div class="progress-bar-fill" id="gee-progress-bar"></div>
+        </div>
+        <div class="gee-status-text" id="gee-status-text">
+          Applying Enhanced Lee 7x7 spatial filter and sigma-nought radiometric normalization...
+        </div>
+      </div>
+
+      <!-- Split SAR Viewport -->
+      <div class="sar-viewport-grid">
+        <!-- Left: Raw SAR -->
+        <div class="sar-frame">
+          <div class="sar-frame-header">
+            <span>INPUT: RAW LEVEL-1 GRD (WITH SPECKLE NOISE)</span>
+            <span class="status-pill danger">UNFILTERED σ²=0.48</span>
+          </div>
+          <div class="sar-canvas-wrapper">
+            <canvas id="sar-raw-canvas" width="640" height="420"></canvas>
+          </div>
+        </div>
+
+        <!-- Right: Cleaned SAR -->
+        <div class="sar-frame">
+          <div class="sar-frame-header">
+            <span>OUTPUT: CALIBRATED & LEE FILTERED (7x7 WINDOW)</span>
+            <span class="status-pill success">CALIBRATED σ₀ (dB)</span>
+          </div>
+          <div class="sar-canvas-wrapper">
+            <canvas id="sar-cleaned-canvas" width="640" height="420"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preprocessing Telemetry Specs -->
+      <div class="sar-specs-grid">
+        <div class="spec-box">
+          <span>SPECKLE FILTER</span>
+          <strong>Enhanced Lee 7x7 Adaptive</strong>
+        </div>
+        <div class="spec-box">
+          <span>CALIBRATION</span>
+          <strong>σ₀ Radiometric Backscatter (dB)</strong>
+        </div>
+        <div class="spec-box">
+          <span>INCIDENCE ANGLE</span>
+          <strong>38.4° (Local Normalization)</strong>
+        </div>
+        <div class="spec-box">
+          <span>CLOUD PENETRATION</span>
+          <strong>100% (C-Band Microwave Active)</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STAGE 3: Oil Spill Detection
+         ==================================================================== -->
+    <section id="stage-3" class="stage-view">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>3. AI Deep Learning Oil Spill Detection</h2>
+          <p>DeepLabV3+ ASPP neural segmentation isolating capillary wave damping surfactant films</p>
+        </div>
+        <div class="stage-badge-pill">DEEP LEARNING MODEL // INFERENCE ACTIVE</div>
+      </div>
+
+      <div class="detection-layout">
+        <!-- Processed SAR with Detected Overlay -->
+        <div class="sar-frame">
+          <div class="sar-frame-header">
+            <span>AI SEGMENTATION OVERLAY: HYDROCARBON SLICK IDENTIFIED</span>
+            <span class="status-pill danger">TARGET CONFIRMED</span>
+          </div>
+          <div class="sar-canvas-wrapper">
+            <canvas id="sar-detection-canvas" width="640" height="420"></canvas>
+          </div>
+        </div>
+
+        <!-- Detection Results & Diagnostics Panel -->
+        <div class="detection-results-panel">
+          <div class="alert-banner-box">
+            <div class="alert-icon">🚨</div>
+            <div class="alert-text">
+              <h3>CRITICAL MARINE DISCHARGE CONFIRMED</h3>
+              <p>Unlawful oily bilge/slop tank discharge identified 52 NM West of Mumbai Coast.</p>
+            </div>
+          </div>
+
+          <div class="stats-card-grid">
+            <div class="stat-card critical">
+              <span class="label">SPILL DETECTED</span>
+              <span class="value">YES</span>
+              <span class="sub">Verified via backscatter dampening</span>
+            </div>
+            <div class="stat-card">
+              <span class="label">MODEL CONFIDENCE</span>
+              <span class="value">94.2%</span>
+              <span class="sub">DeepLabV3+ ASPP Architecture</span>
+            </div>
+            <div class="stat-card">
+              <span class="label">ESTIMATED SLICK AREA</span>
+              <span class="value">12.4 km²</span>
+              <span class="sub">124,000 m² footprint</span>
+            </div>
+            <div class="stat-card">
+              <span class="label">ESTIMATED DISCHARGE</span>
+              <span class="value">~2,450 Bbls</span>
+              <span class="sub">~390 Metric Tons Crude Sludge</span>
+            </div>
+          </div>
+
+          <div class="detection-meta-box">
+            <h4>METOCEAN & SENSOR DIAGNOSTICS</h4>
+            <div class="meta-key-val-list">
+              <div class="meta-row-item">
+                <span>Centroid Coordinates:</span>
+                <strong>18.924° N, 71.852° E</strong>
+              </div>
+              <div class="meta-row-item">
+                <span>Radar Damping Ratio:</span>
+                <strong>9.8 dB (Surfactant signature)</strong>
+              </div>
+              <div class="meta-row-item">
+                <span>Environmental Threat:</span>
+                <strong style="color: #ef4444;">Level 3 Critical (Offshore Flora/Fauna)</strong>
+              </div>
+              <div class="meta-row-item">
+                <span>Next Pipeline Phase:</span>
+                <strong style="color: #38bdf8;">Lagrangian Hindcast Trajectory Backtracking</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STAGE 4: Hindcast/Forwardcast Map
+         ==================================================================== -->
+    <section id="stage-4" class="stage-view">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>4. Hydrodynamic Hindcast & Forwardcast Drift Trajectory</h2>
+          <p>Lagrangian reverse-particle tracking to pinpoint discharge origin and forward dispersion modeling</p>
+        </div>
+        <div class="stage-badge-pill">INCOIS ROMS + LEEWAY DRIFT MODEL</div>
+      </div>
+
+      <div class="map-stage-wrapper">
+        <div class="map-viewport-container" id="map-mount-stage-4">
+          <div id="maritime-map"></div>
+        </div>
+
+        <!-- MetOcean Trajectory Summary Bar -->
+        <div class="sources-grid" style="margin-bottom: 0;">
+          <div class="spec-box">
+            <span>HINDCAST ORIGIN GROUND ZERO (T₀)</span>
+            <strong>18.782° N, 71.614° E (Time: 21:30 UTC, -4h 45m)</strong>
+          </div>
+          <div class="spec-box">
+            <span>INCOIS SURFACE OCEAN CURRENT</span>
+            <strong>0.82 kts @ 165° (South-Southeast)</strong>
+          </div>
+          <div class="spec-box">
+            <span>ECMWF WIND DRIFT & LEEWAY</span>
+            <strong>14.2 kts @ 290° (WNW) with 3.1% surface shear</strong>
+          </div>
+          <div class="spec-box">
+            <span>PREDICTED COASTAL APPROACH</span>
+            <strong style="color: #f59e0b;">18 NM from Alibaug Coastline (+24h)</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STAGE 5: Suspect Vessel Ranking
+         ==================================================================== -->
+    <section id="stage-5" class="stage-view">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>5. Spatial-Temporal Suspect Vessel Attribution Matrix</h2>
+          <p>Correlating AIS transponder gaps, speed drops, and draught changes with hydrodynamic ground zero</p>
+        </div>
+        <div class="stage-badge-pill">NMDA AIS FUSION // ATTRIBUTION ENGINE</div>
+      </div>
+
+      <div class="map-stage-wrapper">
+        <!-- Re-mount map in stage 5 -->
+        <div class="map-viewport-container" id="map-mount-stage-5">
+          <!-- Leaflet map moves here dynamically -->
+        </div>
+
+        <!-- Ranked Suspect Vessel Table -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <h3><span>🎯 RANKED SUSPECT VESSELS (SORTED BY ATTRIBUTION PROBABILITY)</span></h3>
+            <span class="status-pill danger">1 PRIME SUSPECT IDENTIFIED</span>
+          </div>
+          <div class="suspect-table-wrapper">
+            <table class="suspect-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Vessel Identity</th>
+                  <th>Distance at T₀</th>
+                  <th>AIS Status & Integrity</th>
+                  <th>Kinematic Anomaly Profile</th>
+                  <th>Attribution Score</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="suspect-table-body">
+                <!-- Populated dynamically by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STAGE 6: Auto-Generated Incident Dossier / Report
+         ==================================================================== -->
+    <section id="stage-6" class="stage-view">
+      <div class="stage-header-bar">
+        <div class="stage-header-left">
+          <h2>6. Autonomous Operational Incident Dossier & Dispatch</h2>
+          <p>Legal attribution evidence packet generated and transmitted to Indian Coast Guard & Indian Navy</p>
+        </div>
+        <div class="stage-badge-pill">OFFICIAL LEGAL DISPATCH // RESTRICTED</div>
+      </div>
+
+      <div class="report-stage-container">
+        <!-- Actions Toolbar -->
+        <div class="report-action-toolbar">
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" onclick="window.reportGenerator.downloadPDF()">
+              📥 Download Report (Print / PDF)
+            </button>
+            <button class="btn-secondary" onclick="window.reportGenerator.copyDispatchMemo()">
+              📋 Copy Dispatch Memo (Text)
+            </button>
+          </div>
+          <button class="btn-secondary" onclick="window.app.goToStage(1, true)">
+            🔄 Replay Simulation
+          </button>
+        </div>
+
+        <!-- PDF-Style Dossier Document Container -->
+        <div id="report-preview-document">
+          <!-- Populated dynamically by reportGenerator.js -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Nav Controls -->
+  <footer class="bottom-nav-bar">
+    <div class="bottom-nav-container">
+      <button class="btn-secondary" id="btn-prev" disabled>
+        ⬅ Previous Stage
+      </button>
+
+      <div class="sim-indicator-badge" id="sim-indicator">
+        Auto-Advancing (Simulation Active)...
+      </div>
+
+      <button class="btn-primary" id="btn-next">
+        Next Stage ➔
+      </button>
+    </div>
+  </footer>
+
+  <!-- Mandatory SIH Honest Prototype Disclaimer Footer -->
+  <div class="site-footer">
+    <strong>Prototype — Simulated Data for Demo Purposes</strong> | Developed for Smart India Hackathon (SIH) | Autonomous Maritime Spill Attribution System
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Prototype Scripts -->
+  <script src="js/mockData.js"></script>
+  <script src="js/sarCanvas.js"></script>
+  <script src="js/mapController.js"></script>
+  <script src="js/reportGenerator.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
